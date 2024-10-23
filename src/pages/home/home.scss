@@ -1,51 +1,5 @@
-$headerHight: 70px; /* 导航栏高度 */
-
-@keyframes scrollmove-data {
-  from {
-    transform: translateY(-150%);
-  }
-  to {
-    transform: translateY(300%);
-  }
-}
-
-.header {
-  position: fixed;
-  top: 0;
-
-  width: 100%;
-  background-color: white;
-  &-box {
-    padding: 0 40px 0;
-
-    height: $headerHight;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  &-logo {
-    width: 120px;
-    min-width: 120px;
-    height: 32px;
-    background: rgba(12, 12, 12, 0.654);
-    border-radius: 6px;
-    margin-inline-end: 24px;
-
-    color: white;
-    text-align: center;
-    line-height: 32px;
-  }
-  &-menu {
-    display: flex;
-    &__menuItem {
-      width: 120px;
-      margin: 0 10px 0 0;
-      text-align: right;
-    }
-  }
-}
-
 .home-video-box {
+  height: 100%;
   position: relative;
   overflow: hidden;
   .page {
@@ -114,7 +68,7 @@ $headerHight: 70px; /* 导航栏高度 */
     position: absolute;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 1;
     overflow: hidden;
     video {
       min-width: 100%;
@@ -135,15 +89,4 @@ $headerHight: 70px; /* 导航栏高度 */
     background-color: rgba(0, 0, 0, 0.505);
     z-index: 8;
   }
-}
-
-.main {
-  background-color: rgb(99, 99, 99);
-  height: calc(100vh - $headerHight);
-  margin-top: $headerHight;
-}
-.footer {
-  background-color: black;
-  height: 290px;
-  padding: 30px 0 20px 0;
 }
