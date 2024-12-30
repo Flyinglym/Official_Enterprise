@@ -5,21 +5,13 @@ import About from "./about/about";
 import Join from "./join/join";
 import News from "./news/news";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAsyncEffect, useSetState } from 'ahooks';
 import useUrlState from '@ahooksjs/use-url-state';
+import { useRequest } from 'ahooks';
 
 // 视口高度
 const viewHeight = window.innerHeight
 document.body.style.overflow = 'hidden'
 
-// const headerList = [
-//   { title: '首页', to: '/', page: 'home' },
-//   { title: '产品信息', to: '/?page=product', page: 'product' },
-//   { title: '了解我们', to: '/?page=about', page: 'about' },
-//   { title: '加入我们', to: '/?page=join', page: 'join' },
-//   { title: '新闻动态', to: '/?page=news', page: 'news' },
-// ]
 
 const viewList = [
   { domId: "home", element: <Home />, class: "main", styles: {} },
@@ -31,20 +23,18 @@ const viewList = [
 
 
 function App() {
-  const [headerList, setHeaderList] = useState([
+  const headerList = [
     { title: '首页', to: '/', page: 'home', active: "" },
     { title: '产品信息', to: '/?page=product', page: 'product', active: "" },
     { title: '了解我们', to: '/?page=about', page: 'about', active: "" },
     { title: '加入我们', to: '/?page=join', page: 'join', active: "" },
     { title: '新闻动态', to: '/?page=news', page: 'news', active: "" },
-  ])
+  ]
 
   const [currentPosition, setCurrentPosition] = useState(0) // translate3d Y轴高度
   const [flag, setFlag] = useState(false)
   const [headerDispaly, setHeaderDispaly] = useState('none')
-  const [footer, setFooter] = useState(1)
   const [, setUrl] = useUrlState({ page: undefined })
-  const [params] = useSearchParams()
 
   // 导航栏点击事件
   const headerClick = (item: { title?: string; to: string; page?: string; }) => {
@@ -58,26 +48,6 @@ function App() {
       anchorDom.scrollIntoView({ block: 'start', behavior: "smooth" })
     }
   }
-
-  /*   useAsyncEffect(async () => {
-      // console.log(document.getElementById('home')!.getBoundingClientRect());
-  
-      headerList.forEach((item) => {
-        const activeDom = document.getElementById(item.page)!
-        const rect = activeDom.getBoundingClientRect()
-        console.log(rect);
-        if (rect.top >= 0 && rect.bottom <= viewHeight) {
-          setHeaderList(headerList.map((value) => {
-            if (item.page == value.page) {
-              return { ...value, active: 'activeText' }
-            } else {
-              return value
-            }
-          }))
-          console.log(item);
-        }
-      })
-    }) */
 
 
   // 滚动方法
@@ -101,7 +71,7 @@ function App() {
 
   }
   // 滚轮事件函数
-  const wheelEvent = (e: { deltaY: number; }) => {
+  function wheelEvent(e: { deltaY: number; }) {
 
     console.log(e.deltaY);
 
@@ -111,7 +81,9 @@ function App() {
     // content盒子高度
     const contentHeight = document.getElementById('content')?.clientHeight as number
 
-    if (contentHeight - viewHeight == currentPosition) {
+    if (contentHeight - viewHeight == currentPosition && e.deltaY > 0) {
+      console.log(123213213213);
+
       return
     }
     if (!flag) {
@@ -119,14 +91,18 @@ function App() {
     }
   }
 
+  // ahooks防抖
+  const { run } = useRequest(wheelEvent, {
+    debounceWait: 50,
+    manual: true
+  });
+
   useEffect(() => {
 
-    // document.body.addEventListener('wheel', wheelEvent, false)
     setHeaderDispaly(currentPosition > 0 ? '' : 'none')
     return () => {
-      // document.body.removeEventListener('wheel', wheelEvent)
     }
-  }, [currentPosition, flag, footer, params])
+  }, [currentPosition, flag])
 
   return (
     <>
@@ -153,7 +129,7 @@ function App() {
         </div>
       </header>
       <div
-        onWheel={wheelEvent}
+        onWheel={run}
         id="content"
         style={{
           transform: `translate3d(0px, -${currentPosition}px, 0px)`,
